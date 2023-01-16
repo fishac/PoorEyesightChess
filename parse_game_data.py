@@ -14,7 +14,7 @@ squares = [''.join(s) for s in itertools.product(*[files,ranks])]
 occupants = ['wr', 'wn', 'wb', 'wq', 'wk', 'wp', 'br', 'bn', 'bb', 'bq', 'bk', 'bp', 'x']
 
 # Location of downloaded pgn database file.
-database_filename = 'C:/Users/alexpc2red/Documents/lichessgames/lichess_db_standard_rated_2016-03.pgn'
+database_filename = './lichess_db_standard_rated_2016-03.pgn'
 
 # Define a conversion from library color notation to ours.
 def parse_piece_color(piece):
