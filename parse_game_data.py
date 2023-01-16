@@ -39,7 +39,7 @@ def parse_fen_position(board):
     return fen_position
 	
 # Generate a list of all board state dicts from the database file.
-def parse_all_unique_fen_positions(max_games=-1):
+def parse_all_unique_fen_positions(max_games=-1,minimum_rating=-1):
 	fen_positions = {}
 	total_games = 0
 	total_states = 0
@@ -50,22 +50,26 @@ def parse_all_unique_fen_positions(max_games=-1):
 		game = chess.pgn.read_game(pgn)
 		if game is None:
 			break
-		board = game.board()
-		fen_position = parse_fen_position(board)
-		total_states += 1
-		if fen_position not in fen_positions.keys():
-			fen_positions[fen_position] = 1
-		else:
-			fen_positions[fen_position] += 1
-		for move in game.mainline_moves():
-			board.push(move)
-			fen_position = parse_fen_position(board)
-			total_states += 1
-			if fen_position not in fen_positions.keys():
-				fen_positions[fen_position] = 1
-			else:
-				fen_positions[fen_position] += 1
-		total_games += 1 
+		white_elo = game.headers.get('WhiteElo')
+		black_elo = game.headers.get('BlackElo')
+		if white_elo and black_elo:
+			if int(white_elo) > minimum_rating and int(black_elo) > minimum_rating:
+				board = game.board()
+				fen_position = parse_fen_position(board)
+				total_states += 1
+				if fen_position not in fen_positions.keys():
+					fen_positions[fen_position] = 1
+				else:
+					fen_positions[fen_position] += 1
+				for move in game.mainline_moves():
+					board.push(move)
+					fen_position = parse_fen_position(board)
+					total_states += 1
+					if fen_position not in fen_positions.keys():
+						fen_positions[fen_position] = 1
+					else:
+						fen_positions[fen_position] += 1
+				total_games += 1 
 		
 	fen_positions_list = fen_positions.keys()
 	print(f'Total states observed: {total_states}')
@@ -115,9 +119,12 @@ def convert_fens_to_df(fen_positions):
 	
 def main():
 	max_games = -1
+	minimum_rating = -1
 	if len(sys.argv) > 1:
 		max_games = int(sys.argv[1])
-	fen_positions = parse_all_unique_fen_positions(max_games)
+	if len(sys.argv) > 2:
+		minimum_rating = int(sys.argv[2])
+	fen_positions = parse_all_unique_fen_positions(max_games,minimum_rating)
 	board_states_df = convert_fens_to_df(fen_positions)
 	board_states_df.to_csv('./board_states.csv',index=False)
 	

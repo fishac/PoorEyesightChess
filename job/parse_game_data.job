@@ -14,4 +14,4 @@ module load python/3.7.4-3zfxo7j
 
 export PYTHONPATH="${PYTHONPATH}:/hpc/applications/intel/2020/intelpython3/lib/python3.7/site-packages:/users/afish/.local/lib/python3.7/site-packages"
 
-python3 parse_game_data.py 50
+python3 parse_game_data.py 100000 2000
