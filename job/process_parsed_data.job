@@ -1,0 +1,17 @@
+#!/bin/bash
+#SBATCH -J process_parsed_data
+#SBATCH -o process_parsed_data.out
+#SBATCH -e process_parsed_data.err
+#SBATCH -N 1
+#SBATCH -p standard-mem-s
+#SBATCH --exclusive
+#SBATCH -t "1-0"
+#SBATCH --mail-user afish@smu.edu
+#SBATCH --mail-type=all
+
+module load gcc-9.2
+module load python/3.7.4-3zfxo7j
+
+export PYTHONPATH="${PYTHONPATH}:/hpc/applications/intel/2020/intelpython3/lib/python3.7/site-packages:/users/afish/.local/lib/python3.7/site-packages"
+
+python3 process_parsed_data.py
