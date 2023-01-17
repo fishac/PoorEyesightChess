@@ -44,6 +44,7 @@ def process_data(parsed_data):
 def main():
 	parsed_data = pd.read_csv('board_states.csv')
 	processed_data = process_data(parsed_data)
+	processed_data.to_csv('./training_data.csv',index=False)
 	print(f'Columns: {processed_data.columns}')
 	print(f'Total columns: {len(processed_data.columns)}')
 	print('First 2 rows:')
