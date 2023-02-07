@@ -9,7 +9,7 @@ The primary goal of this project is to build a deep-learning model which uses on
 
 Even the most interesting models are mere curiosities without proper deployment, so I created a small chess program to play against this "Poor Eyesight Stockfish" locally on the command-line, instructions for which can be found in the following Section. Additionally, I created a [Lichess](https://www.lichess.org) "bot" account, [PoorEyesightBot](https://lichess.org/?user=PoorEyesightBot#friend), where you can play against Poor Eyesight Stockfish online with no account, downloads, or setup required! 
 
-See the full report on this project: [PoorEyesightChessReport.pdf][PoorEyesightChessReport.pdf].
+See the full report on this project: [PoorEyesightChessReport.pdf](PoorEyesightChessReport.pdf).
 
 ## Playing Against Poor Eyesight Stockfish Locally
 
