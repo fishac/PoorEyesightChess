@@ -1,0 +1,1 @@
+export STOCKFISH_EXE=C:path/to/Stockfish.exe
