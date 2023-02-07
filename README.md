@@ -7,7 +7,7 @@ While Stockfish with perfect vision (i.e., being told the exact board state) is 
 
 The primary goal of this project is to build a deep-learning model which uses only chess piece **location** and **color** information to predict the exact board state, trained on a history of chess games played by real people. 
 
-Even the most interesting models are mere curiosities without proper deployment, so I created a small chess program to play against this "Poor Eyesight Stockfish" locally on the command-line, instructions for which can be found in the following Section. Additionally, I created a [Lichess](https://www.lichess.org) "bot" account, [PoorEyesightBOT](https://lichess.org/?user=PoorEyesightBot#friend), where you can play against Poor Eyesight Stockfish online with no account, downloads, or setup required! 
+Even the most interesting models are mere curiosities without proper deployment, so I created a small chess program to play against this "Poor Eyesight Stockfish" locally on the command-line, instructions for which can be found in the following Section. Additionally, I created a [Lichess](https://www.lichess.org) "bot" account, [PoorEyesightBot](https://lichess.org/?user=PoorEyesightBot#friend), where you can play against Poor Eyesight Stockfish online with no account, downloads, or setup required! 
 
 See the full report on this project: [PoorEyesightChessReport.pdf][PoorEyesightChessReport.pdf].
 
