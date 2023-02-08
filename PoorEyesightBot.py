@@ -149,13 +149,16 @@ class PoorEyesightBot:
 			print('\nAI\'s predicted board:')
 			print(self.board)
 		engine_result = self.engine.play(self.board, chess.engine.Limit(time=1))
-		suggested_move = engine_result.move
-		if suggested_move in real_board.legal_moves:
-			return (suggested_move,False)
+		if engine_result:
+			suggested_move = engine_result.move
+			if suggested_move in real_board.legal_moves:
+				return (suggested_move,False)
+			else:
+				random_move_idx = randint(0,real_board.legal_moves.count()-1)
+				random_move = list(real_board.legal_moves)[random_move_idx]
+				return (random_move,True)
 		else:
-			random_move_idx = randint(0,real_board.legal_moves.count()-1)
-			random_move = list(real_board.legal_moves)[random_move_idx]
-			return (random_move,True)
+			return (None,False)
 
 
 	
