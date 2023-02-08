@@ -32,7 +32,6 @@ class PoorEyesightBot:
 				elif piece.color == chess.BLACK:
 					input[0,i+1] = 1
 			i += 2
-		print(input)
 		return input.to(self.device)
 	
 	def total_kings_color(self, board_state, king_key):
