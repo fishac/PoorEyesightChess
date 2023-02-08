@@ -5,12 +5,13 @@ import FEN
 import PoorEyesightModel
 import torch
 from random import randint
+import os
 
 class PoorEyesightBot:
 	def __init__(self):
 		self.board = chess.Board()
 		self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-		self.engine = chess.engine.SimpleEngine.popen_uci("C:/Users/alexpc2red/Documents/stockfish_15.1_win_x64_avx2/stockfish-windows-2022-x86-64-avx2.exe")
+		self.engine = chess.engine.SimpleEngine.popen_uci(os.environ['STOCKFISH_EXE'])
 		self.load_models()
 			
 	def load_models(self):
