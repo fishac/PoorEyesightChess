@@ -9,27 +9,31 @@ from random import randint
 class PoorEyesightBot:
 	def __init__(self):
 		self.board = chess.Board()
+		self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 		self.engine = chess.engine.SimpleEngine.popen_uci("C:/Users/alexpc2red/Documents/stockfish_15.1_win_x64_avx2/stockfish-windows-2022-x86-64-avx2.exe")
-		self.load_models(model_filename,params_filename)
+		self.load_models()
 			
-	def load_models(self, model_filename, params_filename):
+	def load_models(self):
 		self.models = {}
 		for square in SquareData.squares:
-			model = PoorEyesightModel.PoorEyesightSquareModel4(square, 64*8, 64*32, 64*32, 64*4)
+			model = PoorEyesightModel.PoorEyesightSquareModel(square, 64*8, 64*32, 64*32, 64*4)
 			model.load_state_dict(torch.load(f'./models/model_{square}.pt'))
-			model.to(device)
-			models[square] = model
+			model.to(self.device)
+			self.models[square] = model
 			
 	def get_model_input(self,real_board):
 		input = torch.zeros(1,128)
 		i = 0
 		for square in SquareData.squares:
-			if square[0] == 'w':
-				input[i] = 1
-			elif square[0] == 'b':
-				input[i+1] = 1
+			piece = real_board.piece_at(chess.parse_square(square))
+			if piece is not None:
+				if piece.color == chess.WHITE:
+					input[0,i] = 1
+				elif piece.color == chess.BLACK:
+					input[0,i+1] = 1
 			i += 2
-		return input.to(device)
+		print(input)
+		return input.to(self.device)
 	
 	def total_kings_color(self, board_state, king_key):
 		total_king_count = 0
@@ -46,15 +50,14 @@ class PoorEyesightBot:
 			max_idx = torch.argmax(square_pred)
 			predicted_piece = SquareData.occupants[max_idx]
 			board_state[square] = predicted_piece
-			board_state_probs[square] = square_pred
+			board_state_probs[square] = square_pred[0]
 		return board_state,board_state_probs
 	
 	def fix_board_state(self, board_state, board_state_probs):
 		total_wk = self.total_kings_color(board_state,'wk') 
 		total_bk = self.total_kings_color(board_state,'bk') 
-		
-		# Place white king if no white kings on board
 		if total_wk == 0:
+			# Place white king if no white kings on board
 			highest_wk_prob_square = 'a1'
 			highest_wk_prob = 0
 			wk_prob = 0
@@ -65,8 +68,8 @@ class PoorEyesightBot:
 					highest_wk_prob = wk_prob
 			board_state[highest_wk_prob_square] = 'wk'
 		
-		# Place second-most likely piece in place of least likely white kings if multiple white kings
 		if total_wk > 1:
+			# Place second-most likely piece in place of least likely white kings if multiple white kings
 			wk_squares = []
 			wk_probs = []
 			wk_highest_prob = 0
@@ -81,13 +84,13 @@ class PoorEyesightBot:
 						
 			for i in range(total_wk):
 				if wk_probs[i] < wk_highest_prob:
-					sorted_probs = list(board_state_probs[square]).sort()
+					sorted_probs = list(board_state_probs[wk_squares[i]]).sort()
 					second_highest_prob  = sorted_probs[-2]
-					second_highest_prob_index = board_state_probs[square].index(second_highest_prob)
-					board_state[square] = SquareData.occupants[second_highest_prob_index]
+					second_highest_prob_index = board_state_probs[wk_squares[i]].index(second_highest_prob)
+					board_state[wk_squares[i]] = SquareData.occupants[second_highest_prob_index]
 					
-		# Place black king if no black kings on board
 		if total_bk == 0:
+			# Place black king if no black kings on board
 			highest_bk_prob_square = 'a1'
 			highest_bk_prob = 0
 			bk_prob = 0
@@ -96,7 +99,7 @@ class PoorEyesightBot:
 				# Don't overwrite white king
 				if bk_prob > highest_bk_prob and board_state[square] != 'wk':
 					highest_bk_prob_square = square
-					highest_bk_prob = wk_prob
+					highest_bk_prob = bk_prob
 			board_state[highest_bk_prob_square] = 'bk'
 			
 		# Place second-most likely piece in place of least likely black kings if multiple black kings
@@ -105,6 +108,7 @@ class PoorEyesightBot:
 			bk_probs = []
 			bk_highest_prob = 0
 			bk_prob = 0
+			# Find all squares with a black king and store their black king probabilities
 			for square in SquareData.squares:
 				if board_state[square] == 'bk':
 					bk_squares.append(square)
@@ -113,18 +117,20 @@ class PoorEyesightBot:
 					if bk_prob > bk_highest_prob:
 						bk_highest_prob = bk_prob
 						
+			# Set all black king squares except the most likely black king to the next-most likely pieces
 			for i in range(total_bk):
-				if wk_probs[i] < bk_highest_prob:
-					sorted_probs = list(board_state_probs[square]).sort()
+				if bk_probs[i] < bk_highest_prob:
+					sorted_probs = list(board_state_probs[bk_squares[i]]).sort()
 					second_highest_prob  = sorted_probs[-2]
-					second_highest_prob_index = board_state_probs[square].index(second_highest_prob)
-					# Don't place an extra white king on board
+					second_highest_prob_index = board_state_probs[bk_squares[i]].index(second_highest_prob)
+					# If the next most likely piece is a white king, place 3rd most likely piece.
 					if second_highest_prob_index != SquareData.occupant_indices['wk']:
-						board_state[square] = SquareData.occupants[second_highest_prob_index]
+						board_state[bk_squares[i]] = SquareData.occupants[second_highest_prob_index]
 					else:
 						third_highest_prob  = sorted_probs[-3]
-						third_highest_prob_index = board_state_probs[square].index(third_highest_prob)
-						board_state[square] = SquareData.occupants[third_highest_prob_index]
+						third_highest_prob_index = board_state_probs[bk_squares[i]].index(third_highest_prob)
+						board_state[bk_squares[i]] = SquareData.occupants[third_highest_prob_index]
+		return board_state
 				
 	def get_fen_with_metadata(self, board_state, real_board):
 		predicted_fen = FEN.get_fen(board_state)
@@ -142,15 +148,14 @@ class PoorEyesightBot:
 		if print_predicted_board:
 			print('\nAI\'s predicted board:')
 			print(self.board)
-		suggested_move = engine.play(self.board, chess.engine.Limit(time=1))
+		engine_result = self.engine.play(self.board, chess.engine.Limit(time=1))
+		suggested_move = engine_result.move
 		if suggested_move in real_board.legal_moves:
 			return (suggested_move,False)
 		else:
 			random_move_idx = randint(0,real_board.legal_moves.count()-1)
 			random_move = list(real_board.legal_moves)[random_move_idx]
 			return (random_move,True)
-		
-	def __del__(self):
-		self.engine.quit()
+
 
 	

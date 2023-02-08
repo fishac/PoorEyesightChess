@@ -36,12 +36,12 @@ def main():
 			print('Checkmate. You win.')
 			break
 			
-		move,is_random = bot.make_move(board,print_predicted_board=True)
+		move,is_random = bot.make_move(board,print_predicted_board=False)
 		board.push(move)
 		if is_random:
-			print('\nAI made a random move.')
+			print(f'\nPoorEyesightBot made a random move. It played: {move.uci()}.')
 		else:
-			print('\nAI did not make a random move.')
+			print(f'\nPoorEyesightBot did not make a random move. It played: {move.uci()}.')
 			
 		if board.is_checkmate():
 			print('Checkmate. You lose.')
