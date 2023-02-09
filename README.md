@@ -9,6 +9,11 @@ The primary goal of this project is to build a deep-learning model which uses on
 
 See the full report on this project: [PoorEyesightChessReport.pdf](PoorEyesightChessReport.pdf).
 
+### Keywords
+
+data mining, feature engineering, classification, class imbalance, deep learning,
+parameter tuning, ensemble modeling, model deployment.
+
 ## Playing Against Poor Eyesight Stockfish Locally
 
 First, download this repository via git or a zipped archive download. 
