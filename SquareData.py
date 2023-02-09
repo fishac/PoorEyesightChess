@@ -25,6 +25,10 @@ occupant_indices = {
 	'wp': 11, 
 	'bp': 12
 }
+
+occupants_pretty = ['white king', 'black king', 'white queen', 'black queen', 'white rook', 'black rook', 'white knight', 'black knight', 'white bishop', 'black bishop', 'empty', 'white pawn', 'black pawn']
+first_last_rank_occupants_pretty = ['white king', 'black king', 'white queen', 'black queen', 'white rook', 'black rook', 'white knight', 'black knight', 'white bishop', 'black bishop', 'empty']
+
 # Set up occupants color data.
 # White, black, empty.
 colors = ['w', 'b']
