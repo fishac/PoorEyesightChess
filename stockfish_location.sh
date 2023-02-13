@@ -1,1 +1,1 @@
-export STOCKFISH_EXE=C:path/to/Stockfish.exe
+export STOCKFISH_EXE=C:/Users/alexpc2red/Documents/stockfish_15.1_win_x64_avx2/stockfish-windows-2022-x86-64-avx2.exe
