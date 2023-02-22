@@ -23,3 +23,7 @@ Playing against Poor Eyesight Stockfish locally requires a command-line interfac
 An installation of Stockfish is also required. It is simple enough to download and unzip from [their website](https://stockfishchess.org/download/). With Stockfish is installed, edit the file `stockfish_location.sh` to point to your local Stockfish executable on your computer.
 
 When all of this setup is complete, run `source stockfish_location.sh` on the command-line from inside this repository. This enables the python code to read the location of Stockfish. Finally, play a game by running `python PlayPoorEyesightBot.py` .
+
+## Dashboard
+
+Running the dashboard additionally requires the libraries `streamlit` and `cairosvg`. To start the dashboard, run `streamlit run dashboard.py`.
